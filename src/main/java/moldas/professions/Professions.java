@@ -1,64 +1,36 @@
 package moldas.professions;
 
 import moldas.professions.commands.*;
-import moldas.professions.prof.Miner;
-import moldas.professions.jsonhandler.JsonHandler;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.player.PlayerLoginEvent;
+import moldas.professions.prof.listners.Miner;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.IOException;
+public final class Professions extends JavaPlugin {
 
-public final class Professions extends JavaPlugin implements Listener {
-
+    PlayerDataHandler playersData = new PlayerDataHandler();
 
     @Override
     public void onEnable() {
 
-//        this.getCommand("myproff").setExecutor(new MyProff());
-        this.getCommand("getproff").setExecutor(new GetProff());
-//        this.getCommand("helpproff").setExecutor(new HelpProff());
-//        this.getCommand("listproff").setExecutor(new ListProff());
-//        this.getCommand("leaveproff").setExecutor(new LeaveProff());
+        //TODO Read players data from database
+
+        this.getCommand("myprof").setExecutor(new MyProf());
+        this.getCommand("getprof").setExecutor(new GetProf(playersData));
+        this.getCommand("helpprof").setExecutor(new HelpProf());
+        this.getCommand("listprof").setExecutor(new ListProf());
+        this.getCommand("leaveprof").setExecutor(new LeaveProf());
+        this.getCommand("changestat").setExecutor(new ChangeStat(playersData));
+        this.getCommand("changestat").setTabCompleter(new StatTabCompleter());
+        this.getCommand("getstats").setExecutor(new GetStats(playersData));
+
+        getServer().getPluginManager().registerEvents(new GlobalListeners(playersData), this);
+        getServer().getPluginManager().registerEvents(new Miner(playersData), this);
 
         System.out.println("PLUGIN: prof-plugin is started");
-        System.out.println("Profession plugin is Created by Moldas");
-
-        getServer().getPluginManager().registerEvents(this, this);
-        getServer().getPluginManager().registerEvents(new Miner(), this);
-
+        System.out.println("Profession plugin is Created by AT13, Moldas and ximure");
     }
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
-    }
-
-//    @EventHandler
-//    public void onMine(BlockBreakEvent event){
-//        System.out.print("Mined");
-//        Player player = event.getPlayer();
-//        player.giveExp(25);
-//        player.sendMessage("You harvested" + event.getBlock());
-//    }
-
-    @EventHandler
-    public void onLogin(PlayerLoginEvent event){
-        System.out.println("Someone entered to your server");
-        JsonHandler handler = new JsonHandler();
-        Player player = event.getPlayer();
-        try{
-            handler.createCatalog(player);
-        }catch(IOException e){
-            e.printStackTrace();
-        }finally {
-            player.sendMessage("Your file was created");
-        }
-
-
-
+        //TODO Save players data to database
     }
 }
