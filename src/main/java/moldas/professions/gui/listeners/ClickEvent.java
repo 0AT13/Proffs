@@ -2,6 +2,7 @@ package moldas.professions.gui.listeners;
 
 import moldas.professions.PlayerData;
 import moldas.professions.PlayerDataHandler;
+import moldas.professions.gui.data.GUIButtons;
 import moldas.professions.gui.data.GUIConfirmationWindow;
 import moldas.professions.prof.data.*;
 import net.md_5.bungee.api.ChatColor;
@@ -91,6 +92,7 @@ public class ClickEvent implements Listener {
         try {
 
             if (e.getClickedInventory().equals(professionLeaveGUI)) {
+                //Need to be right here, otherwise player can`t move items in his inventory
                 if (e.getCurrentItem() == null || e.getCurrentItem().getType().isAir()) return;
                 e.setCancelled(true);
 
@@ -167,7 +169,12 @@ public class ClickEvent implements Listener {
             if(clickedProf != null && e.getClickedInventory().equals(GUIConfirmationWindow.confirmationWindowGUI)) {
                 String click = (ChatColor.stripColor(e.getCurrentItem().getItemMeta().getDisplayName()));
 
-                if (e.getCurrentItem() == null || e.getCurrentItem().getType().isAir()) return;
+                //Need to be right here, otherwise player can`t move items in his inventory
+                if (e.getCurrentItem() == null || e.getCurrentItem().getType().isAir()
+                        || e.getCurrentItem().getItemMeta().equals(GUIButtons.NONE_BUTTON.itemStack.getItemMeta())) {
+                    e.setCancelled(true);
+                    return;
+                }
                 e.setCancelled(true);
 
                 if(confirmWindow.confirm(click)){
